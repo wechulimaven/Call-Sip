@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "150288955679",
+    "project_id": "videoholder-c7477",
+    "storage_bucket": "videoholder-c7477.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150288955679:android:bfdfd8edc41d3db320582a",
+        "android_client_info": {
+          "package_name": "com.example.chatting"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150288955679-3ah491bfa3hk18bd3ramceav8q1je1d7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatting",
+            "certificate_hash": "59e1e41e3388b71de0132c9db10a1aa11c624d61"
+          }
+        },
+        {
+          "client_id": "150288955679-902th5b0hhr1oln9t1o4ulkuiblnolm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-t37hTCp1emxWqVkH6abMEO8rYdHMLy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150288955679-902th5b0hhr1oln9t1o4ulkuiblnolm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
