@@ -1,10 +1,12 @@
 import 'package:chatting/constants.dart';
+import 'package:chatting/screens/mpesa/pay.dart';
 import 'package:chatting/utils/call_utilites.dart';
 import 'package:chatting/utils/permissions.dart';
 import 'package:chatting/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
 class LogListContainer extends StatefulWidget {
   final String currentuserid;
@@ -15,6 +17,7 @@ class LogListContainer extends StatefulWidget {
 }
 
 class _LogListContainerState extends State<LogListContainer> {
+  bool isLoading = false;
   getIcon(String callStatus) {
     Icon _icon;
     double _iconSize = 15;
@@ -53,6 +56,8 @@ class _LogListContainerState extends State<LogListContainer> {
 
   @override
   Widget build(BuildContext context) {
+    SimpleFontelicoProgressDialog _dialog = SimpleFontelicoProgressDialog(
+        context: context, barrierDimisable: true);
     return widget.currentuserid == null
         ? oldcircularprogress()
         : FutureBuilder(
@@ -77,112 +82,120 @@ class _LogListContainerState extends State<LogListContainer> {
                       bool hasDialled =
                           _log["callStatus"] == CALL_STATUS_DIALLED;
 
-                          print("USER LOG $_log");
+                      // print("USER LOG $_log");
 
-                      return InkWell(
-                        onTap: () async{ 
-                          print("USER LOG $_log");
-                          
-                          await Permissions
-                                .cameraAndMicrophonePermissionsGranted()
-                            ? CallUtils.dial(
-                                currUserId: widget.currentuserid,
-                                currUserName: _log["callerName"],
-                                currUserAvatar: _log["callerPic"],
-                                receiverId: _log["receiverId"],
-                                receiverAvatar: _log["receiverPic"],
-                                receiverName: _log["receiverName"],
-                                context: context)
-                            : {};},
-                        onLongPress: () => showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: Text("Delete this Log?"),
-                                  content: Text(
-                                      "Are you sure you want to delete this log?"),
-                                  actions: [
-                                    FlatButton(
-                                      child: Text("YES"),
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        Firestore.instance
-                                            .collection("Users")
-                                            .document(widget.currentuserid)
-                                            .collection("callLogs")
-                                            .document(_log["timestamp"])
-                                            .delete();
-                                        if (mounted) {
-                                          setState(() {});
-                                        }
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text("NO"),
-                                      onPressed: () => Navigator.pop(context),
-                                    ),
-                                  ],
-                                )),
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 16, right: 16, top: 10, bottom: 10),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Row(
-                                  children: <Widget>[
-                                    Stack(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              hasDialled
-                                                  ? _log["receiverPic"]
-                                                  : _log["callerPic"]),
-                                          maxRadius: 30,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(hasDialled
-                                                ? _log["receiverName"]
-                                                : _log["callerName"]),
-                                            SizedBox(
-                                              height: 6,
-                                            ),
-                                            Row(
-                                              children: [
-                                                getIcon(_log["callStatus"]),
-                                                Text(
-                                                  DateFormat(
-                                                          "dd MMMM yyy hh:mm aa")
-                                                      .format(DateTime.parse(
-                                                          _log["timestamp"])),
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                      fontStyle:
-                                                          FontStyle.italic),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                      return Container(
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 10, bottom: 10),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Row(
+                                children: <Widget>[
+                                  Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(hasDialled
+                                            ? _log["receiverPic"]
+                                            : _log["callerPic"]),
+                                        maxRadius: 30,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(hasDialled
+                                              ? _log["receiverName"]
+                                              : _log["callerName"]),
+                                          SizedBox(
+                                            height: 6,
+                                          ),
+                                          Row(
+                                            children: [
+                                              getIcon(_log["callStatus"]),
+                                              Text(
+                                                DateFormat(
+                                                        "dd MMMM yyy hh:mm aa")
+                                                    .format(DateTime.parse(
+                                                        _log["timestamp"])),
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.grey.shade500,
+                                                    fontStyle:
+                                                        FontStyle.italic),
+                                              )
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Column(children: [
+                                    hasDialled
+                                        ? InkWell(
+                                            onTap: () async {
+                                              _dialog.show(
+                                                  message: "Forwarding Call");
+                                              print(
+                                                  "CALLER LOG ${_log["callerName"]}");
+                                              print(
+                                                  "CALLER LOG ${_log["callerPic"]}");
+                                              print(
+                                                  "REC LOG ${_log["receiverId"]}");
+                                              print(
+                                                  "REC LOGee ${_log["receiverName"]}");
+
+                                              await Permissions
+                                                      .cameraAndMicrophonePermissionsGranted()
+
+                                                  ? CallUtils.dial
+                                              // Navigator.push(
+                                                  // context,
+                                                  // MaterialPageRoute(
+                                                  //     builder: (context) =>
+                                                     
+                                                      // MakeCall
+                                                      (
+                                                          isVideoCall: false,
+                                                          currUserId: widget
+                                                              .currentuserid,
+                                                          currUserName: _log[
+                                                              "callerName"],
+                                                          currUserAvatar:
+                                                              _log["callerPic"],
+                                                          receiverId: _log[
+                                                              "receiverId"],
+                                                          receiverAvatar: _log[
+                                                              "receiverPic"],
+                                                          receiverName: _log[
+                                                              "receiverName"],
+                                                          context: context)
+                                                          // ,
+                                                // ),
+                                              // );
+                                              : {};
+                                              _dialog.hide();
+                                            },
+                                            child: isLoading
+                                                ? Center(
+                                                    child:
+                                                        CircularProgressIndicator())
+                                                : Icon(Icons.call),
+                                          )
+                                        : SizedBox()
+                                  ])
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },

@@ -22,6 +22,7 @@ class CallUtils {
       String receiverAvatar,
       String receiverName,
       String receiverId,
+      bool isVideoCall,
       context}) async {
     Call call = Call(
       callerId: currUserId,
@@ -59,21 +60,19 @@ class CallUtils {
         "receiverPic": log.receiverPic,
         "timestamp": log.timestamp
       });
-    // String data = await getAccessToken(
-    //   account: ACCOUNT_ID,
-    //   app_Certificate: APP_CCERTIFICATE_ID,
-    //   app_id: APP_ID,
-    //   channel_name: call.channelId,
-    //   role: ClientRole.Broadcaster.toString()
-    // );
-
+      String data = await getAccessToken(
+          account: ACCOUNT_ID,
+          app_Certificate: APP_CCERTIFICATE_ID,
+          app_id: APP_ID,
+          channel_name: call.channelId,
+          role: ClientRole.Broadcaster.toString());
 
       Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CallScreen(
               call: call,
-              // token: data,
+              isVideo: isVideoCall,
               // role: ClientRole.Broadcaster,
             ),
           ));

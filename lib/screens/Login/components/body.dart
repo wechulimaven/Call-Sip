@@ -1,3 +1,6 @@
+// ignore_for_file: missing_return
+
+import 'package:chatting/resources/user_state_methods.dart';
 import 'package:chatting/screens/HomeScreen.dart';
 import 'package:chatting/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +14,7 @@ import 'package:chatting/components/rounded_button.dart';
 import 'package:chatting/components/text_field_container.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:regexed_validator/regexed_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
@@ -27,6 +31,7 @@ class _SignInState extends State<SignIn> {
   String fcmToken;
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
+  TextEditingController ipEditingController = new TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
   bool _passwordVisible;
   bool isloading = false;
@@ -96,6 +101,30 @@ class _SignInState extends State<SignIn> {
               ),
               TextFieldContainer(
                 child: TextFormField(
+                  controller: ipEditingController,
+                  validator: (ipAddress) {
+                    if (ipAddress.isEmpty) {
+                      return 'This field is mandatory';
+                    }
+                    // if (!validator.ip(ipAddress)) {
+                    //   return 'Please enter a Ip address';
+                    // }
+                    // return null;
+                    // return 'This is not a valid address';
+                  },
+                  cursorColor: kPrimaryColor,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.email,
+                      color: kPrimaryColor,
+                    ),
+                    hintText: "Server address",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              TextFieldContainer(
+                child: TextFormField(
                   controller: passwordEditingController,
                   obscureText: !_passwordVisible,
                   validator: (pwValue) {
@@ -117,7 +146,9 @@ class _SignInState extends State<SignIn> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _passwordVisible ? Icons.visibility_off : Icons.visibility,
+                        _passwordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                         color: kPrimaryColor,
                       ),
                       onPressed: () {
@@ -201,17 +232,27 @@ class _SignInState extends State<SignIn> {
         await preferences.setString("name", datasnapshot.data["name"]);
         await preferences.setString("photo", datasnapshot.data["photoUrl"]);
         await preferences.setString("email", datasnapshot.data["email"]);
+        // await preferences.setString("email", datasnapshot.data["email"]);
 
         this.setState(() {
           isloading = false;
         });
-
-        Navigator.pop(context);
-        Route route = MaterialPageRoute(
-            builder: (c) => HomeScreen(
-                  currentuserid: firebaseUser.uid,
-                ));
-        Navigator.pushReplacement(context, route);
+        print("IP ADD ${ipEditingController.text}");
+        print("IP FIRE ${datasnapshot.data["ipAddres"]}");
+        if (ipEditingController.text == datasnapshot.data["ipAddres"]) {
+          Navigator.pop(context);
+          Route route = MaterialPageRoute(
+              builder: (c) => HomeScreen(
+                    currentuserid: firebaseUser.uid,
+                  ));
+          Navigator.pushReplacement(context, route);
+        } else {
+          this.setState(() {
+            isloading = false;
+          });
+          Fluttertoast.showToast(msg: "Please provide correct Ip Address");
+          UserStateMethods().logoutuser(context);
+        }
       });
     } else {
       this.setState(() {

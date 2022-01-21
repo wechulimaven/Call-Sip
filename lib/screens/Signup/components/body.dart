@@ -11,6 +11,7 @@ import 'package:chatting/components/rounded_button.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:regexed_validator/regexed_validator.dart';
 
 import '../../../components/text_field_container.dart';
 
@@ -29,6 +30,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController nameEditingController = new TextEditingController();
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
+  TextEditingController ipEditingController = new TextEditingController();
   SharedPreferences preferences;
   FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoggedin = false;
@@ -80,6 +82,7 @@ class _SignUpState extends State<SignUp> {
           "uid": firebaseUser.uid,
           "email": firebaseUser.email,
           "name": nameEditingController.text,
+          "ipAddres": ipEditingController.text,
           "photoUrl": defaultPhotoUrl,
           "createdAt": DateTime.now().millisecondsSinceEpoch.toString(),
           "state": 1,
@@ -91,12 +94,14 @@ class _SignUpState extends State<SignUp> {
         await preferences.setString("name", nameEditingController.text);
         await preferences.setString("photo", defaultPhotoUrl);
         await preferences.setString("email", currentuser.email);
+        await preferences.setString("ipAddress", ipEditingController.text);
       } else {
         // FirebaseUser currentuser = firebaseUser;
         await preferences.setString("uid", documents[0]["uid"]);
         await preferences.setString("name", documents[0]["name"]);
         await preferences.setString("photo", documents[0]["photoUrl"]);
         await preferences.setString("email", documents[0]["email"]);
+        await preferences.setString("ipAddress", ipEditingController.text);
       }
 
       this.setState(() {
@@ -176,7 +181,7 @@ class _SignUpState extends State<SignUp> {
                         return null;
                       }
 
-                      return 'This is not a valid email';
+                      return 'This is not';
                     },
                     cursorColor: kPrimaryColor,
                     decoration: InputDecoration(
@@ -185,6 +190,29 @@ class _SignUpState extends State<SignUp> {
                         color: kPrimaryColor,
                       ),
                       hintText: "Your Email",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                TextFieldContainer(
+                  child: TextFormField(
+                    controller: ipEditingController,
+                    validator: (ipAddress) {
+                      if (ipAddress.isEmpty) {
+                        return 'This field is mandatory';
+                      }
+                      if (!validator.ip(ipAddress)) {
+                        return 'Please enter a valid ip address';
+                      }
+                      return null;
+                    },
+                    cursorColor: kPrimaryColor,
+                    decoration: InputDecoration(
+                      icon: Icon(
+                        Icons.email,
+                        color: kPrimaryColor,
+                      ),
+                      hintText: "Server address",
                       border: InputBorder.none,
                     ),
                   ),

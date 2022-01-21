@@ -1,3 +1,4 @@
+import 'package:chatting/screens/mpesa/pay.dart';
 import 'package:chatting/utils/call_utilites.dart';
 import 'package:chatting/widgets/StatusIndicator.dart';
 import 'package:chatting/utils/permissions.dart';
@@ -78,16 +79,23 @@ class ChatDetailPageAppBar extends StatelessWidget
                   color: Colors.grey.shade700,
                 ),
                 onPressed: () async =>
-                    await Permissions.cameraAndMicrophonePermissionsGranted()
-                        ? CallUtils.dial(
-                            currUserId: currUserId,
-                            currUserName: currUserName,
-                            currUserAvatar: currUserAvatar,
-                            receiverId: receiverId,
-                            receiverAvatar: receiverAvatar,
-                            receiverName: receiverName,
-                            context: context)
-                        : {},
+
+                    // await Permissions.cameraAndMicrophonePermissionsGranted()
+                    //     ?
+                    Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MakeCall(
+                        isVideo: true,
+                        currUserId: currUserId,
+                        currUserName: currUserName,
+                        currUserAvatar: currUserAvatar,
+                        receiverId: receiverId,
+                        receiverAvatar: receiverAvatar,
+                        receiverName: receiverName,
+                        context: context),
+                  ),
+                ),
+                // : {},
               ),
             ],
           ),

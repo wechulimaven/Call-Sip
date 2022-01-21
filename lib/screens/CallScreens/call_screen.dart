@@ -12,9 +12,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CallScreen extends StatefulWidget {
   final Call call;
+  bool isVideo;
 
   CallScreen({
     @required this.call,
+   @required this.isVideo
   });
 
   @override
@@ -63,7 +65,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _initAgoraRtcEngine() async {
     await AgoraRtcEngine.create(APP_ID);
     // await AgoraRtcEngine.disableVideo();
-    await AgoraRtcEngine.enableVideo();
+  widget.isVideo?  await AgoraRtcEngine.enableVideo():await AgoraRtcEngine.disableVideo();
   }
 
   /// Add agora event handlers
