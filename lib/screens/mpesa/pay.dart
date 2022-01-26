@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:chatting/resources/payment_service.dart';
 import 'package:chatting/utils/call_utilites.dart';
 import 'package:chatting/utils/permissions.dart';
@@ -110,6 +112,14 @@ class MakeCallState extends State<MakeCall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(
+          Icons.arrow_back_ios_new,
+          size: 35,
+        ),
+      )),
       body: Container(
         color: Colors.white,
         child: SafeArea(
@@ -302,6 +312,16 @@ class MakeCallState extends State<MakeCall> {
                                             width: 3,
                                           ),
                                           Icon(Icons.credit_card),
+                                          // SizedBox(width: 30),
+                                          Spacer(),
+                                          ElevatedButton.icon(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              icon: Icon(
+                                                Icons.arrow_back_ios_new,
+                                                size: 35,
+                                              ),
+                                              label: Text("Back")),
                                         ],
                                       ),
                                       onPressed: () {

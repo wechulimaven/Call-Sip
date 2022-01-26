@@ -14,10 +14,7 @@ class CallScreen extends StatefulWidget {
   final Call call;
   bool isVideo;
 
-  CallScreen({
-    @required this.call,
-   @required this.isVideo
-  });
+  CallScreen({@required this.call, @required this.isVideo});
 
   @override
   _CallScreenState createState() => _CallScreenState();
@@ -65,7 +62,9 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _initAgoraRtcEngine() async {
     await AgoraRtcEngine.create(APP_ID);
     // await AgoraRtcEngine.disableVideo();
-  widget.isVideo?  await AgoraRtcEngine.enableVideo():await AgoraRtcEngine.disableVideo();
+    widget.isVideo
+        ? await AgoraRtcEngine.enableVideo()
+        : await AgoraRtcEngine.disableVideo();
   }
 
   /// Add agora event handlers
@@ -291,6 +290,7 @@ class _CallScreenState extends State<CallScreen> {
                   "callStatus": log.callStatus
                 });
               }
+              // Navigator.pop(context);
             },
             child: Icon(
               Icons.call_end,
@@ -395,6 +395,11 @@ class _CallScreenState extends State<CallScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+          leading:IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios_new, size: 35,),
+              )),
       body: Center(
         child: Stack(
           children: <Widget>[
